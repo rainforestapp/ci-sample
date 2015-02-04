@@ -1,0 +1,15 @@
+dependencies:
+  pre:
+    - gem install rainforest-cli
+
+deployment:
+  staging:
+    branch: develop
+    commands:
+      - git push git@heroku.com:rainforest-ci-sample-staging.git $CIRCLE_SHA1:refs/heads/master
+      - rainforest run all --token $RAINFOREST_TOKEN --fg --fail-fast
+
+  production:
+    branch: master
+    commands:
+      - git push git@heroku.com:rainforest-ci-sample-production.git $CIRCLE_SHA1:refs/heads/master
