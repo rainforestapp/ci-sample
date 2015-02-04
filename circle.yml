@@ -24,4 +24,5 @@ deployment:
   production:
     branch: master
     commands:
+      # Deploy to production
       - git push git@heroku.com:rainforest-ci-sample-prd.git $CIRCLE_SHA1:refs/heads/master
