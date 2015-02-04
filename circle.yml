@@ -1,15 +1,27 @@
 dependencies:
   pre:
+    # Install the latests version of rainforest-cli. This will allow us to
+    # trigger a Rainforest run after each deploy.
     - gem install rainforest-cli
 
 deployment:
   staging:
     branch: develop
     commands:
+      # Push our code to our staging or QA server. Depending on your hosting
+      # provider, this command would change. We're using Heroku here.
       - git push git@heroku.com:rainforest-ci-sample-staging.git $CIRCLE_SHA1:refs/heads/master
+      # Run all Rainforest tests. RAINFOREST_TOKEN is an environment variable
+      # that needs to be configued in CircleCI's UI. It represents the API token
+      # of your Rainforest account. You can find it in your account's settings.
       - rainforest run all --token $RAINFOREST_TOKEN --fg --fail-fast
+
+      # Our Rainforest build was successul! Push the code to the master branch
+      # which will kick another circle build deploying our code to production.
+      - git push origin $CIRCLE_SHA1:refs/heads/master
+
 
   production:
     branch: master
     commands:
-      - git push git@heroku.com:rainforest-ci-sample-production.git $CIRCLE_SHA1:refs/heads/master
+      - git push git@heroku.com:rainforest-ci-sample-prd.git $CIRCLE_SHA1:refs/heads/master
