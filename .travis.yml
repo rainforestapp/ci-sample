@@ -3,9 +3,6 @@ rvm:
 - 2.2.0
 
 install:
-  # Install the latests version of rainforest-cli. This will allow us to
-  # trigger a Rainforest run after each deploy.
-  - gem install rainforest-cli
   - bundle install
 
 deploy:

@@ -3,6 +3,10 @@
 # Die on error
 set -e
 
+# Install the latests version of rainforest-cli. This will allow us to
+# trigger a Rainforest run after each deploy.
+gem install rainforest-cli
+
 # Run all Rainforest tests. RAINFOREST_TOKEN is an environment variable
 # that needs to be configued in CircleCI's UI. It represents the API token
 # of your Rainforest account. You can find it in your account's settings.
