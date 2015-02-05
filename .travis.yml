@@ -5,6 +5,10 @@ rvm:
 install:
   - bundle install
 
+  # Install the latests version of rainforest-cli. This will allow us to
+  # trigger a Rainforest run after each deploy.
+  - gem install rainforest-cli
+
 deploy:
   # Deploy to our staging environment on Heroku
   - provider: heroku
