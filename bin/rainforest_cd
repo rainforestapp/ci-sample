@@ -3,10 +3,9 @@
 # Die on error
 set -e
 
-# Output debug info
-set -x
-
 echo $PATH
+ruby --version
+gem list
 
 # Run all Rainforest tests. RAINFOREST_TOKEN is an environment variable
 # that needs to be configued in CircleCI's UI. It represents the API token
