@@ -17,15 +17,8 @@ deploy:
     on:
       repo: rainforestapp/ci-sample
       branch: develop
-    run:
-      # Run all Rainforest tests. RAINFOREST_TOKEN is an environment variable
-      # that needs to be configued in CircleCI's UI. It represents the API token
-      # of your Rainforest account. You can find it in your account's settings.
-      - rainforest run all --token $RAINFOREST_TOKEN --fg --fail-fast
-
-      # Our Rainforest build was successul! Push the code to the master branch
-      # which will kick another circle build deploying our code to production.
-      - git push origin $CIRCLE_SHA1:refs/heads/master
+    # Run a script after the deploy. This starts Rainforest and pushes to master
+    run: "./bin/rainforest_cd"
 
   # Deploy to our production environment on Heroku
   - provider: heroku
