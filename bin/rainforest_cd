@@ -3,6 +3,11 @@
 # Die on error
 set -e
 
+# Output debug info
+set -x
+
+echo $PATH
+
 # Run all Rainforest tests. RAINFOREST_TOKEN is an environment variable
 # that needs to be configued in CircleCI's UI. It represents the API token
 # of your Rainforest account. You can find it in your account's settings.
