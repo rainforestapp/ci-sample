@@ -3,6 +3,8 @@
 # Die on error
 set -e
 
+gem install rainforest-cli
+
 echo $PATH
 ruby --version
 gem list
