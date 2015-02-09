@@ -1,3 +1,7 @@
+test:
+  override:
+    - bundle exec rake
+
 dependencies:
   pre:
     # Install the latests version of rainforest-cli. This will allow us to
