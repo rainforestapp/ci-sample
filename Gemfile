@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.2.0'
+ruby File.read(".ruby-version").chomp
 
 gem 'sinatra'
 gem 'rake'
