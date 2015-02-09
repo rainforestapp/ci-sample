@@ -16,4 +16,4 @@ rainforest run all --token $RAINFOREST_TOKEN --fg --fail-fast
 
 # Our Rainforest build was successul! Push the code to the master branch
 # which will kick another circle build deploying our code to production.
-git push origin $CIRCLE_SHA1:refs/heads/master
+git push origin develop:master

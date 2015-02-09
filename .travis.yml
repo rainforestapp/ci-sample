@@ -25,7 +25,7 @@ deploy:
       repo: rainforestapp/ci-sample
       branch: develop
     # Run a script after the deploy. This starts Rainforest and pushes to master
-    run: "./bin/rainforest_cd"
+    run: "env ./bin/rainforest_cd"
 
   # Deploy to our production environment on Heroku
   - provider: heroku
