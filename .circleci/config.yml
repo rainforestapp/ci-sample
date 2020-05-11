@@ -1,0 +1,69 @@
+version: 2.1
+
+orbs:
+  # For documentation and more usage examples, see the orb's repo and registry pages:
+  # https://github.com/rainforestapp/rainforest-orb
+  # https://circleci.com/orbs/registry/orb/rainforest-qa/rainforest
+  rainforest: rainforest-qa/rainforest@1
+  heroku: circleci/heroku@1
+
+jobs:
+  test:
+    docker:
+      - image: circleci/ruby:2.2.0-node
+        environment:
+          RACK_ENV: test
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /home/circleci/rspec
+      - run: gem install bundler
+      - run: bundle install
+      - run: bundle exec rake
+
+  merge_to_master:
+    docker:
+      - image: alpine:3.8
+    steps:
+        - run: git push origin $CIRCLE_SHA1:refs/heads/master
+
+workflows:
+  test_and_merge:
+    jobs:
+      - test
+
+      # Push our code to our staging or QA server. Depending on your hosting
+      # provider, this command would change. We're using Heroku here.
+      - heroku/deploy-via-git:
+          name: deploy_staging
+          app-name: rainforest-ci-sample-staging
+          filters:
+            branches:
+              only: develop
+
+      # Run our Rainforest tests. `run_group_id` should point to the Run Group you
+      # want to use for your releases. `environment_id` should point to your Staging or QA
+      # environment (the one we just deployed to).
+      - rainforest/run:
+          name: run_rainforest
+          run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
+          environment_id: "343"
+          crowd: ${RELEASE_CROWD:-default}
+          conflict: abort
+          requires:
+            - deploy_staging
+
+      # Our Rainforest build was successful! Push the code to the master branch
+      # which will kick another circle build deploying our code to production.
+      - merge_to_master:
+          requires:
+            - run_rainforest
+
+  release:
+    jobs:
+      - heroku/deploy-via-git:
+          name: deploy_production
+          app-name: rainforest-ci-sample-prd
+          filters:
+            branches:
+              only: master

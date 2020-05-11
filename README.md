@@ -4,7 +4,7 @@ The goal of this repository is to show how to configure various CI servers to wo
 
 ## CI Server Tested
 
-- [Circle CI](https://circleci.com/) - [View Config](https://github.com/rainforestapp/ci-sample/blob/master/circle.yml)
+- [Circle CI](https://circleci.com/) - [View Config](https://github.com/rainforestapp/ci-sample/blob/master/.circleci/config.yml)
 
 ## How does this work?
 
