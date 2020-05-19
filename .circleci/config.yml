@@ -47,7 +47,7 @@ workflows:
       - rainforest/run:
           name: run_rainforest
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
-          environment_id: "343"
+          environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
           crowd: ${RELEASE_CROWD:-default}
           conflict: abort
           requires:
