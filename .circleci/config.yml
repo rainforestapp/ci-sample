@@ -25,6 +25,7 @@ jobs:
     docker:
       - image: cimg/base:2020.01
     steps:
+      - checkout
       - run: git push origin $CIRCLE_SHA1:refs/heads/master
 
 workflows:
