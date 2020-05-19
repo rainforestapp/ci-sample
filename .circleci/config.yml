@@ -23,9 +23,9 @@ jobs:
 
   merge_to_master:
     docker:
-      - image: alpine:3.8
+      - image: cimg/base:2020.01
     steps:
-        - run: git push origin $CIRCLE_SHA1:refs/heads/master
+      - run: git push origin $CIRCLE_SHA1:refs/heads/master
 
 workflows:
   test_and_merge:
