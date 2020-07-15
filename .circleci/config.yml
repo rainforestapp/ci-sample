@@ -4,7 +4,7 @@ orbs:
   # For documentation and more usage examples, see the orb's repo and registry pages:
   # https://github.com/rainforestapp/rainforest-orb
   # https://circleci.com/orbs/registry/orb/rainforest-qa/rainforest
-  rainforest: rainforest-qa/rainforest@1
+  rainforest: rainforest-qa/rainforest@2
   heroku: circleci/heroku@1
 
 jobs:
@@ -51,6 +51,9 @@ workflows:
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
           crowd: ${RELEASE_CROWD:-default}
           conflict: abort
+          # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
+          # rerunning a failed CircleCI build.
+          pipeline_id: << pipeline.id >>
           requires:
             - deploy_staging
 
