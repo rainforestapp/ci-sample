@@ -11,9 +11,12 @@ env:
 install:
   - bundle install
 
-  # Install the latests version of rainforest-cli. This will allow us to
-  # trigger a Rainforest run after each deploy.
-  - gem install rainforest-cli
+  # Install the latest stable version of rainforest-cli.
+  # This will allow us to trigger a Rainforest run after each deploy.
+  - curl -O https://bin.equinox.io/c/htRtQZagtfg/rainforest-cli-stable-darwin-amd64.zip
+  - unzip rainforest-cli-stable-darwin-amd64.zip
+  # - wget "https://bin.equinox.io/c/htRtQZagtfg/rainforest-cli-stable-linux-amd64.tgz"
+  # - tar xvf rainforest-cli-stable-linux-amd64.tgz -C /usr/local/bin
 
 deploy:
   # Deploy to our staging environment on Heroku
