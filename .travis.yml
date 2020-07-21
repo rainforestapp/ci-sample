@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-- 2.2.0
+- 2.7.1
 
 # Configure the RAINFOREST_TOKEN environment variable. You can get the secure
 # string by running 'travis encrypt RAINFOREST_TOKEN=<my_token>'

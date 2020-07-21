@@ -1,0 +1,92 @@
+version: 2.1
+
+orbs:
+  # For documentation and more usage examples, see the orb's repo and registry pages:
+  # https://github.com/rainforestapp/rainforest-orb
+  # https://circleci.com/orbs/registry/orb/rainforest-qa/rainforest
+  rainforest: rainforest-qa/rainforest@2
+  heroku: circleci/heroku@1
+
+jobs:
+  test:
+    docker:
+      - image: circleci/ruby:2.7.1-node
+        environment:
+          RACK_ENV: test
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /home/circleci/rspec
+      - run: gem install bundler
+      - run: bundle install
+      - run: bundle exec rake
+
+  merge_to_master:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - checkout
+      - run: git push origin $CIRCLE_SHA1:refs/heads/master
+
+workflows:
+  # Daily monitoring of general application functionality
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only: develop
+    jobs:
+      - test
+      # Run our Rainforest tests. `run_group_id` should point to the Run Group you
+      # want to use for your releases. `environment_id` should point to your Staging or QA
+      # environment.
+      - rainforest/run:
+          name: run_rainforest
+          run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
+          environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
+          crowd: ${RELEASE_CROWD:-default}
+          conflict: abort
+          # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
+          # rerunning a failed CircleCI build.
+          pipeline_id: << pipeline.id >>
+
+  test_and_merge:
+    jobs:
+      - test
+
+      # Push our code to our staging or QA server. Depending on your hosting
+      # provider, this command would change. We're using Heroku here.
+      - heroku/deploy-via-git:
+          name: deploy_staging
+          app-name: rainforest-ci-sample-staging
+          filters:
+            branches:
+              only: develop
+
+      # Run our Rainforest tests as above, but to be performed on any merge
+      - rainforest/run:
+          name: run_rainforest
+          run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
+          environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
+          crowd: ${RELEASE_CROWD:-default}
+          conflict: abort
+          pipeline_id: << pipeline.id >>
+          requires:
+            - deploy_staging
+
+      # Our Rainforest build was successful! Push the code to the master branch
+      # which will kick another circle build deploying our code to production.
+      - merge_to_master:
+          requires:
+            - run_rainforest
+
+  release:
+    jobs:
+      - heroku/deploy-via-git:
+          name: deploy_production
+          app-name: rainforest-ci-sample-prd
+          filters:
+            branches:
+              only: master
