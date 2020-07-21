@@ -29,6 +29,29 @@ jobs:
       - run: git push origin $CIRCLE_SHA1:refs/heads/master
 
 workflows:
+  # Daily monitoring of general application functionality
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only: develop
+    jobs:
+      - test
+      # Run our Rainforest tests. `run_group_id` should point to the Run Group you
+      # want to use for your releases. `environment_id` should point to your Staging or QA
+      # environment.
+      - rainforest/run:
+          name: run_rainforest
+          run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
+          environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
+          crowd: ${RELEASE_CROWD:-default}
+          conflict: abort
+          # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
+          # rerunning a failed CircleCI build.
+          pipeline_id: << pipeline.id >>
+
   test_and_merge:
     jobs:
       - test
@@ -42,17 +65,13 @@ workflows:
             branches:
               only: develop
 
-      # Run our Rainforest tests. `run_group_id` should point to the Run Group you
-      # want to use for your releases. `environment_id` should point to your Staging or QA
-      # environment (the one we just deployed to).
+      # Run our Rainforest tests as above, but to be performed on any merge
       - rainforest/run:
           name: run_rainforest
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
           crowd: ${RELEASE_CROWD:-default}
           conflict: abort
-          # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
-          # rerunning a failed CircleCI build.
           pipeline_id: << pipeline.id >>
           requires:
             - deploy_staging
