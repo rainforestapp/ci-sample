@@ -34,6 +34,15 @@ jobs:
     steps:
       - checkout
       - run: git push origin $CIRCLE_SHA1:refs/heads/master
+  
+  slack_notify:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - slack/status:
+          fail_only: true
+          webhook: ${SLACK_WEBHOOK}
+
 
 workflows:
   # Daily monitoring of general application functionality
@@ -58,9 +67,7 @@ workflows:
           # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
           # rerunning a failed CircleCI build.
           pipeline_id: << pipeline.id >>
-      - slack/status:
-          fail_only: true
-          webhook: ${SLACK_WEBHOOK}
+      - slack_notify
 
   test_and_merge:
     jobs:
@@ -85,9 +92,7 @@ workflows:
           pipeline_id: << pipeline.id >>
           requires:
             - deploy_staging
-      - slack/status:
-          fail_only: true
-          webhook: ${SLACK_WEBHOOK}
+      - slack_notify
 
       # Our Rainforest build was successful! Push the code to the master branch
       # which will kick another circle build deploying our code to production.
