@@ -2,6 +2,17 @@ language: ruby
 rvm:
 - 2.7.1
 
+stages:
+  - install
+  - install_rainforest_cli
+  - run_unit_tests
+  - run_rainforest_tests
+  - name: deploy_staging
+    # require specific branch names for deploy steps
+    if: branch = develop
+  - name: deploy_prod
+    if: branch = master
+
 # Configure the RAINFOREST_TOKEN environment variable. You can get the secure
 # string by running 'travis encrypt RAINFOREST_TOKEN=<my_token>'
 env:
@@ -11,12 +22,21 @@ env:
 install:
   - bundle install
 
+install_rainforest_cli:
   # Install the latest stable version of rainforest-cli.
   # This will allow us to trigger a Rainforest run after each deploy.
   - wget "https://bin.equinox.io/c/htRtQZagtfg/rainforest-cli-stable-linux-amd64.tgz"
   - tar xvf rainforest-cli-stable-linux-amd64.tgz
 
-deploy:
+run_unit_tests:
+  # Run unit tests
+  - bundle exec rake
+
+run_rainforest_tests:
+  # Trigger Rainforest run and wait for results
+  - rainforest run all --token $RAINFOREST_TOKEN --fg
+
+deploy_staging:
   # Deploy to our staging environment on Heroku
   - provider: heroku
     api_key:
@@ -25,10 +45,9 @@ deploy:
     on:
       repo: rainforestapp/ci-sample
       branch: develop
-    # Run a script after the deploy. This starts Rainforest and pushes to master
-    run: "env ./bin/rainforest_cd"
 
-  # Deploy to our production environment on Heroku
+deploy_prod:
+  # Deploy to our master environment on Heroku
   - provider: heroku
     api_key:
       secure: gGZwXnv/+n5J1qRzcbm8hQZxg9eToNPKNm0Vjs2S05kVzq67sPZD0MlfzUyx1ejqZTS7FWxkTWspAs3QTgJC7HsTXGY0qIenK/m9KkUKMpEgd35hMBLJx516kQgO1GAFkJSYp/AvIVN6krqs0Z96U0eshKdmWdINO6PTa95QLds=
