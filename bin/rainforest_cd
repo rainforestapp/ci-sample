@@ -6,11 +6,11 @@ set -e
 # Run all Rainforest tests. RAINFOREST_TOKEN is an environment variable
 # that needs to be configued in CircleCI's UI. It represents the API token
 # of your Rainforest account. You can find it in your account's settings.
-rainforest run all --token $RAINFOREST_TOKEN --fg --fail-fast
+rainforest run all --token $RAINFOREST_TOKEN --fg
 
 # If our Rainforest build was successful, we will push the code to master
 # This would kick another circle build deploying our code to production.
-# We use circle to deploy, but we've commented out the command here 
-# to serve as an example.
+# We use CircleCI to deploy this repo, so we've commented out the command here 
+# and left it as an example.
 
 # git push origin develop:master
