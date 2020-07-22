@@ -6,6 +6,10 @@ orbs:
   # https://circleci.com/orbs/registry/orb/rainforest-qa/rainforest
   rainforest: rainforest-qa/rainforest@2
   heroku: circleci/heroku@1
+  # The slack orb allows immediate visibility into any problem with the release
+  # For information on how to configure your slack webhook, see the documentation:
+  # https://circleci.com/docs/2.0/notifications/#notifications-with-orbs
+  slack: circleci/slack@3.4.2
 
 jobs:
   test:
@@ -20,6 +24,9 @@ jobs:
       - run: gem install bundler
       - run: bundle install
       - run: bundle exec rake
+      - slack/status:
+          fail_only: true
+          webhook: ${SLACK_WEBHOOK}
 
   merge_to_master:
     docker:
@@ -51,6 +58,9 @@ workflows:
           # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
           # rerunning a failed CircleCI build.
           pipeline_id: << pipeline.id >>
+      - slack/status:
+          fail_only: true
+          webhook: ${SLACK_WEBHOOK}
 
   test_and_merge:
     jobs:
@@ -75,6 +85,9 @@ workflows:
           pipeline_id: << pipeline.id >>
           requires:
             - deploy_staging
+      - slack/status:
+          fail_only: true
+          webhook: ${SLACK_WEBHOOK}
 
       # Our Rainforest build was successful! Push the code to the master branch
       # which will kick another circle build deploying our code to production.
