@@ -2,6 +2,15 @@ language: ruby
 rvm:
 - 2.7.1
 
+jobs:
+  include:
+    - stage: install
+    - stage: install_rainforest_cli
+    - stage: run_unit_tests
+    - stage: run_rainforest_tests
+    - stage: deploy_staging
+    - stage: deploy_prod
+
 stages:
   - install
   - install_rainforest_cli
