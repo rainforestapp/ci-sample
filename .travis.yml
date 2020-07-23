@@ -39,17 +39,6 @@ jobs:
           repo: rainforestapp/ci-sample
           branch: master
 
-stages:
-  - install
-  - install_rainforest_cli
-  - run_unit_tests
-  - run_rainforest_tests
-  - name: deploy_staging
-    # require specific branch names for deploy steps
-    if: branch = develop 
-  - name: deploy_prod
-    if: branch = master
-
 # Configure the RAINFOREST_TOKEN environment variable. You can get the secure
 # string by running 'travis encrypt RAINFOREST_TOKEN=<my_token>'
 env:
