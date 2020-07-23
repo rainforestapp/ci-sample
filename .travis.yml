@@ -18,26 +18,24 @@ jobs:
       - sudo mv rainforest /usr/local/bin/
       # Trigger Rainforest run and wait for results
       - /usr/local/bin/rainforest run --run-group 7597 --token $RAINFOREST_TOKEN
-    - stage: deploy_staging
-      script:
-      # Deploy to our staging environment on Heroku
-      - provider: heroku
-        api_key:
-          secure: CJdkaqDYW9GB4Sh73nhnQYeJ11O7ebSd+BtMwVA9LcU+y4bZ7VmAPk/heXmNwabe0yJ8QoHhULE8JEm0t2pzKYB+VAi2yt4gsKQ4RMW1KsJGo3xLrnv1IZs67BIXxdeq3WNq+kIcO106ZeHfKaKpUpV9DdcO+IfBAQOpz8jc1eU=
-        app: rainforest-ci-sample-staging
-        on:
-          repo: rainforestapp/ci-sample
-          branch: develop
-    - stage: deploy_prod
-      script:
-      # Deploy to our master environment on Heroku
-      - provider: heroku
-        api_key:
-          secure: CJdkaqDYW9GB4Sh73nhnQYeJ11O7ebSd+BtMwVA9LcU+y4bZ7VmAPk/heXmNwabe0yJ8QoHhULE8JEm0t2pzKYB+VAi2yt4gsKQ4RMW1KsJGo3xLrnv1IZs67BIXxdeq3WNq+kIcO106ZeHfKaKpUpV9DdcO+IfBAQOpz8jc1eU=
-        app: rainforest-ci-sample-prd
-        on:
-          repo: rainforestapp/ci-sample
-          branch: master
+
+deploy:
+  # Deploy to our staging environment on Heroku
+  - provider: heroku
+    api_key:
+      secure: CJdkaqDYW9GB4Sh73nhnQYeJ11O7ebSd+BtMwVA9LcU+y4bZ7VmAPk/heXmNwabe0yJ8QoHhULE8JEm0t2pzKYB+VAi2yt4gsKQ4RMW1KsJGo3xLrnv1IZs67BIXxdeq3WNq+kIcO106ZeHfKaKpUpV9DdcO+IfBAQOpz8jc1eU=
+    app: rainforest-ci-sample-staging
+    on:
+      repo: rainforestapp/ci-sample
+      branch: develop
+  # Deploy to our master environment on Heroku
+  - provider: heroku
+    api_key:
+      secure: CJdkaqDYW9GB4Sh73nhnQYeJ11O7ebSd+BtMwVA9LcU+y4bZ7VmAPk/heXmNwabe0yJ8QoHhULE8JEm0t2pzKYB+VAi2yt4gsKQ4RMW1KsJGo3xLrnv1IZs67BIXxdeq3WNq+kIcO106ZeHfKaKpUpV9DdcO+IfBAQOpz8jc1eU=
+    app: rainforest-ci-sample-prd
+    on:
+      repo: rainforestapp/ci-sample
+      branch: master
 
 # Configure the RAINFOREST_TOKEN environment variable. You can get the secure
 # string by running 'travis encrypt RAINFOREST_TOKEN=<my_token>'
