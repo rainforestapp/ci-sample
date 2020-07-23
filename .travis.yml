@@ -17,13 +17,13 @@ jobs:
       - tar xvf rainforest-cli-stable-linux-amd64.tgz
       - sudo mv rainforest /usr/local/bin/
       # Trigger Rainforest run and wait for results
-      - /usr/local/bin/rainforest run all --token $RAINFOREST_TOKEN
+      - /usr/local/bin/rainforest run all --browsers chrome --token $RAINFOREST_TOKEN
     - stage: deploy_staging
       script:
       # Deploy to our staging environment on Heroku
       - provider: heroku
         api_key:
-          secure: gGZwXnv/+n5J1qRzcbm8hQZxg9eToNPKNm0Vjs2S05kVzq67sPZD0MlfzUyx1ejqZTS7FWxkTWspAs3QTgJC7HsTXGY0qIenK/m9KkUKMpEgd35hMBLJx516kQgO1GAFkJSYp/AvIVN6krqs0Z96U0eshKdmWdINO6PTa95QLds=
+          secure: CJdkaqDYW9GB4Sh73nhnQYeJ11O7ebSd+BtMwVA9LcU+y4bZ7VmAPk/heXmNwabe0yJ8QoHhULE8JEm0t2pzKYB+VAi2yt4gsKQ4RMW1KsJGo3xLrnv1IZs67BIXxdeq3WNq+kIcO106ZeHfKaKpUpV9DdcO+IfBAQOpz8jc1eU=
         app: rainforest-ci-sample-staging
         on:
           repo: rainforestapp/ci-sample
@@ -33,7 +33,7 @@ jobs:
       # Deploy to our master environment on Heroku
       - provider: heroku
         api_key:
-          secure: gGZwXnv/+n5J1qRzcbm8hQZxg9eToNPKNm0Vjs2S05kVzq67sPZD0MlfzUyx1ejqZTS7FWxkTWspAs3QTgJC7HsTXGY0qIenK/m9KkUKMpEgd35hMBLJx516kQgO1GAFkJSYp/AvIVN6krqs0Z96U0eshKdmWdINO6PTa95QLds=
+          secure: CJdkaqDYW9GB4Sh73nhnQYeJ11O7ebSd+BtMwVA9LcU+y4bZ7VmAPk/heXmNwabe0yJ8QoHhULE8JEm0t2pzKYB+VAi2yt4gsKQ4RMW1KsJGo3xLrnv1IZs67BIXxdeq3WNq+kIcO106ZeHfKaKpUpV9DdcO+IfBAQOpz8jc1eU=
         app: rainforest-ci-sample-prd
         on:
           repo: rainforestapp/ci-sample
@@ -43,7 +43,7 @@ jobs:
 # string by running 'travis encrypt RAINFOREST_TOKEN=<my_token>'
 env:
   global:
-    secure: A/8sE0BBzCjRiG4EwmthvbueOUqZikyrWWyD4ICNa8TyFptuls8peFxrLuUV6xgjVOqHzqQVKwzKXudAsxTE4rEBz2j7KNSA+LYWacorhaD1eDW2+HxyBHzonSVpsHxl/ZF2ZdrJyIOREgAzT2L1qGr9Wk45+qDYVgC4Y3XNRos=
+    secure: "ZFOc6JbZ5jeI0Gyg+oPWtzhIN7pJkiBKg4q5vy0hdogM1ySB5nWNIj1J283Ne5mvn2eg55lJEn49Gk9tO6EOhLWGp1v4DP6QiWNFIDkW0w0kaDdpq4mx5CEFSlUszo5zawdkMzixaMBY1EpA/Jgbi7BwRdbNqdkr2PLpcF9uVRY="
 
 install:
   - bundle install
