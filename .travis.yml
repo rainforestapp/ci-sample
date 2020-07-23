@@ -17,7 +17,7 @@ jobs:
       - tar xvf rainforest-cli-stable-linux-amd64.tgz
       - sudo mv rainforest /usr/local/bin/
       # Trigger Rainforest run and wait for results
-      - /usr/local/bin/rainforest run all --browsers chrome --token $RAINFOREST_TOKEN
+      - /usr/local/bin/rainforest run --run-group 7597 --token $RAINFOREST_TOKEN
     - stage: deploy_staging
       script:
       # Deploy to our staging environment on Heroku
