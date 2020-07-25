@@ -32,7 +32,7 @@ pipeline {
 
         // Run Rainforest tests
         // Trigger Rainforest run and wait for results
-        sh "rainforest run --run-group 7597 --token ${RAINFOREST_TOKEN}"
+        sh "./rainforest run --run-group 7597 --token ${RAINFOREST_TOKEN}"
       }
     }
 
