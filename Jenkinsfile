@@ -1,6 +1,8 @@
 pipeline {
 
-  agent any
+  agent {
+    docker { image 'ruby:2.7' }
+  }
 
   environment {
     PLATFORM_CREDENTIALS = credentials("heroku-auth-token")
