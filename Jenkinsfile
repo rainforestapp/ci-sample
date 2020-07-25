@@ -6,7 +6,7 @@ pipeline {
 
   environment {
     PLATFORM_CREDENTIALS = credentials("heroku-auth-token")
-    RAINFOREST_TOKEN = credentials("rainforest-api-token")
+    RAINFOREST_TOKEN = credentials("rainforest-auth-token")
   }
 
   stages {
