@@ -5,7 +5,7 @@ orbs:
   # https://github.com/rainforestapp/rainforest-orb
   # https://circleci.com/orbs/registry/orb/rainforest-qa/rainforest
   rainforest: rainforest-qa/rainforest@2
-  heroku: circleci/heroku@1
+  heroku: circleci/heroku@1.1.1
 
 jobs:
   test:
