@@ -5,7 +5,7 @@ pipeline {
   }
 
   environment {
-    PLATFORM_CREDENTIALS = credentials("heroku-auth-token")
+    PLATFORM_CREDENTIALS = credentials("heroku-api-token")
     RAINFOREST_TOKEN = credentials("rainforest-auth-token")
   }
 
@@ -44,6 +44,7 @@ pipeline {
       }
       steps {
         echo "deploying the application to develop branch"
+        sh "git push -f heroku-staging HEAD:develop"
       }
     }
 
@@ -55,6 +56,7 @@ pipeline {
       }
       steps {
         echo "deploying the application to master branch"
+        sh "git push -f heroku-prd HEAD:master"
       }
     }
 
