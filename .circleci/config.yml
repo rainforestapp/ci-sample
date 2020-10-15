@@ -11,6 +11,9 @@ jobs:
   test:
     docker:
       - image: circleci/ruby:2.7.1-node
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
         environment:
           RACK_ENV: test
     steps:
@@ -24,6 +27,9 @@ jobs:
   merge_to_master:
     docker:
       - image: cimg/base:2020.01
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
     steps:
       - checkout
       - run: git push origin $CIRCLE_SHA1:refs/heads/master
@@ -54,7 +60,9 @@ workflows:
 
   test_and_merge:
     jobs:
-      - test
+      - test:
+          context:
+            - DockerHub
 
       # Push our code to our staging or QA server. Depending on your hosting
       # provider, this command would change. We're using Heroku here.
@@ -81,6 +89,8 @@ workflows:
       - merge_to_master:
           requires:
             - run_rainforest
+          context:
+            - DockerHub
 
   release:
     jobs:
@@ -90,3 +100,5 @@ workflows:
           filters:
             branches:
               only: master
+          context:
+            - DockerHub
