@@ -19,8 +19,9 @@ pipeline {
 
         // Install the latest stable version of rainforest-cli.
         // This will allow us to trigger a Rainforest run before we deploy.
-        sh "wget 'https://bin.equinox.io/c/htRtQZagtfg/rainforest-cli-stable-linux-amd64.tgz'"
-        sh "tar xvf rainforest-cli-stable-linux-amd64.tgz"
+        sh "curl https://api.github.com/repos/rainforestapp/rainforest-cli/releases/latest | jq '.assets[].browser_download_url' | grep linux-amd64 | xargs wget -O rainforest-cli.tgz"
+        sh "tar xvf rainforest-cli.tgz"
+        sh "mv rainforest-cli rainforest"
       }
     }
 
