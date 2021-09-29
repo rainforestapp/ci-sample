@@ -15,7 +15,7 @@ jobs:
       # This will allow us to trigger a Rainforest run before we deploy.
       - curl https://api.github.com/repos/rainforestapp/rainforest-cli/releases/latest | jq -r '.assets[].browser_download_url' | grep linux-amd64 | xargs wget -O rainforest-cli.tgz
       - tar xvf rainforest-cli.tgz
-      - sudo mv rainforest-cli /usr/local/bin/rainforest
+      - sudo mv rainforest /usr/local/bin/rainforest
       # Trigger Rainforest run and wait for results
       - /usr/local/bin/rainforest run --run-group 7597 --token $RAINFOREST_TOKEN
 
