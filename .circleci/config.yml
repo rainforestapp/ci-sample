@@ -4,7 +4,7 @@ orbs:
   # For documentation and more usage examples, see the orb's repo and registry pages:
   # https://github.com/rainforestapp/rainforest-orb
   # https://circleci.com/orbs/registry/orb/rainforest-qa/rainforest
-  rainforest: rainforest-qa/rainforest@2
+  rainforest: rainforest-qa/rainforest@3
   heroku: circleci/heroku@1.1.1
 
 jobs:
