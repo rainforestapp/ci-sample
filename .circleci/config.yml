@@ -8,6 +8,20 @@ orbs:
   heroku: circleci/heroku@1.1.1
 
 jobs:
+  check_chosen_ci:
+    docker:
+      - image: cimg/base:2020.01
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
+    steps:
+      - checkout
+      - run: |
+          ci=./script/pick_ci.sh
+          if [ $ci != "circleci" ] ; then
+            circleci-agent step-halt
+          fi
+
   test:
     docker:
       - image: circleci/ruby:2.7.1-node
@@ -60,6 +74,13 @@ workflows:
 
   test_and_merge:
     jobs:
+      - check_chosen_ci:
+          context:
+            - DockerHub
+          filters:
+            branches:
+              only: develop
+
       - test:
           context:
             - DockerHub
@@ -69,9 +90,8 @@ workflows:
       - heroku/deploy-via-git:
           name: deploy_staging
           app-name: rainforest-ci-sample-staging
-          filters:
-            branches:
-              only: develop
+          requires:
+            - check_chosen_ci
 
       # Run our Rainforest tests as above, but to be performed on any merge
       - rainforest/run:
