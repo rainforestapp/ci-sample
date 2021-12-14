@@ -1,0 +1,16 @@
+on:
+  schedule:
+    - cron: '0 0 1-15 * *'
+
+jobs:
+  # Run our Rainforest tests. `run_group_id` should point to the Run Group you
+  # want to use for your releases. See the action documentation for additional
+  # options you can use: https://github.com/marketplace/actions/rainforest-qa-github-action
+  run_rainforest:
+    runs-on: ubuntu-latest
+    needs: deploy_staging
+    steps:
+      - uses: rainforestapp/github-action@v1
+        with:
+          token: ${{ secrets.RAINFOREST_TOKEN }}
+          run_group_id: 7597

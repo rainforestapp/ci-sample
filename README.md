@@ -21,4 +21,4 @@ There are working sample configurations for three common CI tools ([CircleCI](./
 This is a simple and effective way of preventing regressions by automatically running both unit tests and your Rainforest test suite. The sample workflows can be modified for your application and run as-is, or can be easily extended to fit the requirements for your specific release workflow.
 
 ## CI Server Tested
-We test our sample configuration nightly via [CircleCI](https://circleci.com/). View our [configuration file](./.circleci/config.yml).
+We test our sample configuration nightly via [CircleCI](https://circleci.com/) and [GitHub Actions](https://docs.github.com/en/actions). View our configuration files for [CircleCI](./.circleci/config.yml) and [GitHub Actions](./.github/workflows/schedule.yml).
