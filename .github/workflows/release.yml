@@ -1,0 +1,64 @@
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  # Our sample repo has no tests, but this is where you would include your unit
+  # tests, to be run in parallel to your Rainforest tests.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Run Tests
+        run: bundle exec rake
+        env:
+          RACK_ENV: test
+
+  # Push our code to our staging or QA server. Depending on your hosting
+  # provider, this command would change. We're using Heroku here.
+  deploy_staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: rainforest-ci-sample-staging
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+
+  # Run our Rainforest tests. `run_group_id` should point to the Run Group you
+  # want to use for your releases. See the action documentation for additional
+  # options you can use: https://github.com/marketplace/actions/rainforest-qa-github-action
+  run_rainforest:
+    runs-on: ubuntu-latest
+    needs: deploy_staging
+    steps:
+      - uses: rainforestapp/github-action@v1
+        with:
+          token: ${{ secrets.RAINFOREST_TOKEN }}
+          run_group_id: 7597
+
+  # Our Rainforest build was successful! Push the code to the master branch.
+  merge_to_master:
+    runs-on: ubuntu-latest
+    needs: [test, run_rainforest]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+      - run: git push origin $GITHUB_SHA:refs/heads/master
+
+  # Now that the master branch has been updated, deploy to production.
+  deploy_production:
+    runs-on: ubuntu-latest
+    needs: merge_to_master
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: rainforest-ci-sample-prd
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
