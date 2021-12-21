@@ -19,7 +19,7 @@ jobs:
       - run: |
           ci=./script/pick_ci.sh
           if [ $ci != "circleci" ] ; then
-            circleci-agent step-halt
+            circleci-agent step halt
           fi
 
   test:
