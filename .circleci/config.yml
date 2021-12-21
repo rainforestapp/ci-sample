@@ -85,15 +85,15 @@ workflows:
           context:
             - DockerHub
 
-      # Push our code to our staging or QA server. Depending on your hosting
-      # provider, this command would change. We're using Heroku here.
+      # Push our code to our staging or QA server. We're using Heroku here but you will need
+      # to change this to match how you deploy your releases.
       - heroku/deploy-via-git:
           name: deploy_staging
           app-name: rainforest-ci-sample-staging
           requires:
             - check_chosen_ci
 
-      # Run our Rainforest tests as above, but to be performed on any merge
+      # Run our Rainforest tests as above, but to be performed on any merge.
       - rainforest/run:
           name: run_rainforest
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
@@ -104,8 +104,8 @@ workflows:
           requires:
             - deploy_staging
 
-      # Our Rainforest build was successful! Push the code to the master branch
-      # which will kick another circle build deploying our code to production.
+      # Our Rainforest build was successful! Push the code to the master branch which
+      # will start another CircleCI workflow that will deploy our code to production.
       - merge_to_master:
           requires:
             - run_rainforest

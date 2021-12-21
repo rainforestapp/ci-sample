@@ -3,8 +3,8 @@ on:
     branches: [develop]
 
 jobs:
-  # Our sample repo has no tests, but this is where you would include your unit
-  # tests, to be run in parallel to your Rainforest tests.
+  # Our sample repo has no tests but this is where you would include your unit
+  # tests to run concurrently with your Rainforest tests.
   test:
     runs-on: ubuntu-latest
     steps:
@@ -17,8 +17,8 @@ jobs:
         env:
           RACK_ENV: test
 
-  # This sample repo has functional GitHub Actions and CircleCI workflows. In order to avoid
-  # conflicts, we only use one tool for each release.
+  # This sample repo has functional GitHub Actions and CircleCI workflows. To avoid conflicts
+  # we only use one tool for each release.
   pick_ci:
     outputs:
       chosen_ci: ${{ steps.pick_ci.outputs.chosen_ci }}
@@ -29,8 +29,8 @@ jobs:
           ci=./script/pick_ci.sh
           echo "::set-output name=chosen_ci::$ci"
 
-  # Push our code to our staging or QA server. Depending on your hosting
-  # provider, this command would change. We're using Heroku here.
+  # Push our code to our staging or QA server. We're using Heroku here but you will need to
+  # change this to match how you deploy your releases.
   deploy_staging:
     runs-on: ubuntu-latest
     needs: pick_ci
