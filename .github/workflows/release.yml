@@ -25,8 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          ci=./script/pick_ci.sh
+      - id: pick_ci
+        name: Pick CI
+        run: |
+          ci=$(script/pick_ci.sh)
+          echo "Picked $ci"
           echo "::set-output name=chosen_ci::$ci"
 
   # Push our code to our staging or QA server. We're using Heroku here but you will need to

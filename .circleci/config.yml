@@ -7,21 +7,18 @@ orbs:
   rainforest: rainforest-qa/rainforest@3
   heroku: circleci/heroku@1.1.1
 
-jobs:
+commands:
   check_chosen_ci:
-    docker:
-      - image: cimg/base:2020.01
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_TOKEN
     steps:
-      - checkout
-      - run: |
-          ci=./script/pick_ci.sh
-          if [ $ci != "circleci" ] ; then
-            circleci-agent step halt
-          fi
-
+      - run:
+          name: Pick CI
+          command: |
+            ci=$(script/pick_ci.sh)
+            echo "Picked $ci"
+            if [ $ci != "circleci" ] ; then
+              circleci-agent step halt
+            fi
+jobs:
   test:
     docker:
       - image: circleci/ruby:2.7.1-node
@@ -38,6 +35,18 @@ jobs:
       - run: bundle install
       - run: bundle exec rake
 
+  run_rainforest:
+    executor: rainforest/default
+    steps:
+      - checkout
+      - check_chosen_ci
+      - rainforest/run_qa: # Command provided by the Orb, to be used in your own jobs
+          run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
+          environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
+          crowd: ${RELEASE_CROWD:-default}
+          conflict: abort
+          pipeline_id: << pipeline.id >>
+
   merge_to_master:
     docker:
       - image: cimg/base:2020.01
@@ -46,6 +55,7 @@ jobs:
           password: $DOCKERHUB_TOKEN
     steps:
       - checkout
+      - check_chosen_ci
       - run: git push origin $CIRCLE_SHA1:refs/heads/master
 
 workflows:
@@ -62,7 +72,7 @@ workflows:
       # Run our Rainforest tests. `run_group_id` should point to the Run Group you
       # want to use for your releases. `environment_id` should point to your Staging or QA
       # environment.
-      - rainforest/run:
+      - rainforest/run: # Job provided by the orb, to be used in your workflows
           name: run_rainforest
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
@@ -74,13 +84,6 @@ workflows:
 
   test_and_merge:
     jobs:
-      - check_chosen_ci:
-          context:
-            - DockerHub
-          filters:
-            branches:
-              only: develop
-
       - test:
           context:
             - DockerHub
@@ -90,17 +93,14 @@ workflows:
       - heroku/deploy-via-git:
           name: deploy_staging
           app-name: rainforest-ci-sample-staging
-          requires:
+          pre-deploy:
             - check_chosen_ci
+          filters:
+            branches:
+              only: develop
 
       # Run our Rainforest tests as above, but to be performed on any merge.
-      - rainforest/run:
-          name: run_rainforest
-          run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
-          environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
-          crowd: ${RELEASE_CROWD:-default}
-          conflict: abort
-          pipeline_id: << pipeline.id >>
+      - run_rainforest:
           requires:
             - deploy_staging
 
