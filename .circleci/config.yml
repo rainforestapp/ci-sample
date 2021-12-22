@@ -35,6 +35,7 @@ jobs:
       - run: bundle install
       - run: bundle exec rake
 
+  # This job shows how to use commands provided by the Orb to run your Rainforest tests.
   run_rainforest:
     docker:
       - image: cimg/base:2021.12
@@ -45,13 +46,22 @@ jobs:
       - checkout
       - check_chosen_ci
       - run: mkdir -p /home/circleci/.local/bin
+      # Command provided by the Orb to install the CLI.
+      # This is only needed if you do not use the `rainforest/run` job (see below) or the
+      # `rainforest/default` executor (https://circleci.com/developer/orbs/orb/rainforest-qa/rainforest#executors).
       - rainforest/install:
           install_path: /home/circleci/.local/bin
-      - rainforest/run_qa: # Command provided by the Orb, to be used in your own jobs
+      # Command to run your tests. `run_group_id` should point to the Run Group you
+      # want to use for your releases. `environment_id` should point to your Staging or QA
+      # environment. See the docs for a full list of parameters:
+      # https://circleci.com/developer/orbs/orb/rainforest-qa/rainforest#commands-run_qa
+      - rainforest/run_qa:
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
           crowd: ${RELEASE_CROWD:-default}
           conflict: abort
+          # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
+          # rerunning a failed CircleCI build.
           pipeline_id: << pipeline.id >>
 
   merge_to_master:
@@ -76,17 +86,14 @@ workflows:
               only: develop
     jobs:
       - test
-      # Run our Rainforest tests. `run_group_id` should point to the Run Group you
-      # want to use for your releases. `environment_id` should point to your Staging or QA
-      # environment.
-      - rainforest/run: # Job provided by the orb, to be used in your workflows
+      # Job provided by the Orb to run your tests.
+      # This accepts the same parameters as the `rainforest/run_qa` command (see above).
+      - rainforest/run:
           name: run_rainforest
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
           crowd: ${RELEASE_CROWD:-default}
           conflict: abort
-          # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
-          # rerunning a failed CircleCI build.
           pipeline_id: << pipeline.id >>
 
   test_and_merge:
