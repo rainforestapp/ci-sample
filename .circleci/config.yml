@@ -46,6 +46,10 @@ jobs:
       - checkout
       - check_chosen_ci
       - run: mkdir -p /home/circleci/.local/bin
+      - restore_cache:
+          keys:
+            - rainforest-run-{{ .Revision }}-{{ .BuildNum }}
+            - rainforest-run-{{ .Revision }}-
       # Command provided by the Orb to install the CLI.
       # This is only needed if you do not use the `rainforest/run` job (see below) or the
       # `rainforest/default` executor (https://circleci.com/developer/orbs/orb/rainforest-qa/rainforest#executors).
@@ -63,6 +67,15 @@ jobs:
           # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
           # rerunning a failed CircleCI build.
           pipeline_id: << pipeline.id >>
+      # Command to save the created run's ID. Together with the `restore_cache` and `save_cache` steps,
+      # this allows you to rerun only failed tests when rerunning a failed workflow.
+      - rainforest/save_run_id:
+          pipeline_id: << pipeline.id >>
+      - save_cache:
+          when: on_fail
+          key: rainforest-run-{{ .Revision }}-{{ .BuildNum }}
+          paths:
+            - ~/pipeline
 
   merge_to_master:
     docker:
