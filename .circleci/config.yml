@@ -36,10 +36,17 @@ jobs:
       - run: bundle exec rake
 
   run_rainforest:
-    executor: rainforest/default
+    docker:
+      - image: cimg/base:2021.12
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
     steps:
       - checkout
       - check_chosen_ci
+      - run: mkdir -p /home/circleci/.local/bin
+      - rainforest/install:
+          install_path: /home/circleci/.local/bin
       - rainforest/run_qa: # Command provided by the Orb, to be used in your own jobs
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
