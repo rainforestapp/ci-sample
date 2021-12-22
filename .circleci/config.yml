@@ -35,17 +35,47 @@ jobs:
       - run: bundle install
       - run: bundle exec rake
 
+  # This job shows how to use commands provided by the Orb to run your Rainforest tests.
   run_rainforest:
-    executor: rainforest/default
+    docker:
+      - image: cimg/base:2021.12
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
     steps:
       - checkout
       - check_chosen_ci
-      - rainforest/run_qa: # Command provided by the Orb, to be used in your own jobs
+      - run: mkdir -p /home/circleci/.local/bin
+      - restore_cache:
+          keys:
+            - rainforest-run-{{ .Revision }}-{{ .BuildNum }}
+            - rainforest-run-{{ .Revision }}-
+      # Command provided by the Orb to install the CLI.
+      # This is only needed if you do not use the `rainforest/run` job (see below) or the
+      # `rainforest/default` executor (https://circleci.com/developer/orbs/orb/rainforest-qa/rainforest#executors).
+      - rainforest/install:
+          install_path: /home/circleci/.local/bin
+      # Command to run your tests. `run_group_id` should point to the Run Group you
+      # want to use for your releases. `environment_id` should point to your Staging or QA
+      # environment. See the docs for a full list of parameters:
+      # https://circleci.com/developer/orbs/orb/rainforest-qa/rainforest#commands-run_qa
+      - rainforest/run_qa:
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
           crowd: ${RELEASE_CROWD:-default}
           conflict: abort
+          # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
+          # rerunning a failed CircleCI build.
           pipeline_id: << pipeline.id >>
+      # Command to save the created run's ID. Together with the `restore_cache` and `save_cache` steps,
+      # this allows you to rerun only failed tests when rerunning a failed workflow.
+      - rainforest/save_run_id:
+          pipeline_id: << pipeline.id >>
+      - save_cache:
+          when: on_fail
+          key: rainforest-run-{{ .Revision }}-{{ .BuildNum }}
+          paths:
+            - ~/pipeline
 
   merge_to_master:
     docker:
@@ -69,17 +99,14 @@ workflows:
               only: develop
     jobs:
       - test
-      # Run our Rainforest tests. `run_group_id` should point to the Run Group you
-      # want to use for your releases. `environment_id` should point to your Staging or QA
-      # environment.
-      - rainforest/run: # Job provided by the orb, to be used in your workflows
-          name: run_rainforest
+      # Job provided by the Orb to run your tests.
+      # This accepts the same parameters as the `rainforest/run_qa` command (see above).
+      - rainforest/run:
+          name: run_rainforest_nightly
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
           crowd: ${RELEASE_CROWD:-default}
           conflict: abort
-          # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
-          # rerunning a failed CircleCI build.
           pipeline_id: << pipeline.id >>
 
   test_and_merge:
@@ -111,6 +138,9 @@ workflows:
             - run_rainforest
           context:
             - DockerHub
+          filters:
+            branches:
+              only: develop
 
   release:
     jobs:
