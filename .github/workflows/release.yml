@@ -66,6 +66,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - run: git push origin $GITHUB_SHA:refs/heads/master
 
   # Now that the master branch has been updated, deploy to production.
