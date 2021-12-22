@@ -138,6 +138,9 @@ workflows:
             - run_rainforest
           context:
             - DockerHub
+          filters:
+            branches:
+              only: develop
 
   release:
     jobs:
