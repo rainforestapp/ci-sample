@@ -8,7 +8,6 @@ jobs:
   # options you can use: https://github.com/marketplace/actions/rainforest-qa-github-action
   run_rainforest:
     runs-on: ubuntu-latest
-    needs: deploy_staging
     steps:
       - uses: rainforestapp/github-action@v1
         with:
