@@ -63,7 +63,7 @@ jobs:
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
           crowd: ${RELEASE_CROWD:-default}
-          conflict: abort
+          conflict: cancel
           # Passing in the pipeline ID enables rerunning only failed Rainforest tests when
           # rerunning a failed CircleCI build.
           pipeline_id: << pipeline.id >>
@@ -106,7 +106,7 @@ workflows:
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
           crowd: ${RELEASE_CROWD:-default}
-          conflict: abort
+          conflict: cancel
           pipeline_id: << pipeline.id >>
 
   test_and_merge:
