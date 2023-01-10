@@ -125,11 +125,15 @@ workflows:
           filters:
             branches:
               only: develop
+          context:
+            - Heroku
 
       # Run our Rainforest tests as above, but to be performed on any merge.
       - run_rainforest:
           requires:
             - deploy_staging
+          context:
+            - RainforestQA
 
       # Our Rainforest build was successful! Push the code to the master branch which
       # will start another CircleCI workflow that will deploy our code to production.
@@ -152,3 +156,4 @@ workflows:
               only: master
           context:
             - DockerHub
+            - Heroku
