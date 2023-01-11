@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: rainforestapp/github-action@v1
         with:
-          token: ${{ secrets.RAINFOREST_TOKEN }}
+          token: ${{ secrets.RF_MAIN_API_TOKEN }}
           run_group_id: 7597
 
   # Our Rainforest build was successful! Push the code to the master branch.
