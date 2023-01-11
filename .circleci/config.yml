@@ -86,6 +86,9 @@ jobs:
     steps:
       - checkout
       - check_chosen_ci
+      - add_ssh_keys:
+          fingerprints:
+            - "96:18:ca:04:c9:d5:6c:36:8d:e5:58:30:6e:f1:5a:cd"
       - run: git push origin $CIRCLE_SHA1:refs/heads/master
 
 workflows:
