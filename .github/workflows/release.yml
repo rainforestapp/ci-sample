@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -24,7 +24,7 @@ jobs:
       chosen_ci: ${{ steps.pick_ci.outputs.chosen_ci }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: pick_ci
         name: Pick CI
         run: |
@@ -39,7 +39,7 @@ jobs:
     needs: pick_ci
     if: needs.pick_ci.outputs.chosen_ci == 'github-actions'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: rainforestapp/github-action@v1
         with:
-          token: ${{ secrets.RAINFOREST_TOKEN }}
+          token: ${{ secrets.RF_MAIN_API_TOKEN }}
           run_group_id: 7597
 
   # Our Rainforest build was successful! Push the code to the master branch.
@@ -65,7 +65,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - run: git push origin $GITHUB_SHA:refs/heads/master
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: merge_to_master
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
