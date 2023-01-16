@@ -105,6 +105,8 @@ workflows:
       # Job provided by the Orb to run your tests.
       # This accepts the same parameters as the `rainforest/run_qa` command (see above).
       - rainforest/run:
+          context:
+            - RainforestQA
           name: run_rainforest_nightly
           run_group_id: ${RELEASE_RUN_GROUP_ID:-2401}
           environment_id: ${RELEASE_ENVIRONMENT_ID:-343}
