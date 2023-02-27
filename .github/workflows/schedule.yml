@@ -9,7 +9,7 @@ jobs:
   run_rainforest:
     runs-on: ubuntu-latest
     steps:
-      - uses: rainforestapp/github-action@v1
+      - uses: rainforestapp/github-action@v3
         with:
           token: ${{ secrets.RF_MAIN_API_TOKEN }}
           run_group_id: 7597
