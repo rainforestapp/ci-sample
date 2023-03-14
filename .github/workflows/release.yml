@@ -30,7 +30,7 @@ jobs:
         run: |
           ci=$(script/pick_ci.sh)
           echo "Picked $ci"
-          echo "::set-output name=chosen_ci::$ci"
+          echo "chosen_ci=$ci" >> $GITHUB_OUTPUT
 
   # Push our code to our staging or QA server. We're using Heroku here but you will need to
   # change this to match how you deploy your releases.
@@ -40,7 +40,7 @@ jobs:
     if: needs.pick_ci.outputs.chosen_ci == 'github-actions'
     steps:
       - uses: actions/checkout@v3
-      - uses: akhileshns/heroku-deploy@v3.12.13
+      - uses: akhileshns/heroku-deploy@v3
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: rainforest-ci-sample-staging
@@ -76,7 +76,7 @@ jobs:
     needs: merge_to_master
     steps:
       - uses: actions/checkout@v3
-      - uses: akhileshns/heroku-deploy@v3.12.13
+      - uses: akhileshns/heroku-deploy@v3
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: rainforest-ci-sample-prd
