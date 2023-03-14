@@ -30,7 +30,7 @@ jobs:
         run: |
           ci=$(script/pick_ci.sh)
           echo "Picked $ci"
-          echo "::set-output name=chosen_ci::$ci"
+          echo "chosen_ci=$ci" >> $GITHUB_OUTPUT
 
   # Push our code to our staging or QA server. We're using Heroku here but you will need to
   # change this to match how you deploy your releases.
